@@ -10,9 +10,19 @@ class TURING:
 		self.states = states
 
 	def simulateMachine(self):
-		# Starts at state 1
+		# Starts at module 1
 		self.currPosition = 1
 		self.currState = 1
+		self.hashtagMarker = 0
+		self.actual = 0
+
+		# Initializing the tape with #
+		tape = ['#']*100
+		str = ' '
+		print("==========================================")
+		print('Initializing Tape.......')
+		print('Tape: /' + str.join(tape[:20]) + '/' ) #shows only n number of values to be printed
+		print(f'Current # Marker at position: {self.hashtagMarker} ')
 
 		#while loop runs as long as the 'Halt' state has not been reached
 		while self.states[self.currState].getMove() != 'Halt':
@@ -21,16 +31,48 @@ class TURING:
 			print(f"Module # {self.states[self.currState].getIndex()} ")
 			print(f"Currently at Turing Module: {self.states[self.currState].getMove()}")
 			print(f"Action/Value/Transition: {self.states[self.currState].getTransition()} ")
-			if(self.states[self.currState].getMove() == 'shR' or self.states[self.currState].getMove() == 'shL' 
-			or self.states[self.currState].getMove() == 'const' or self.states[self.currState].getMove() == 'copy'
-			or self.states[self.currState].getMove() == 'move' or self.states[self.currState].getMove() == 'swap'
-			or self.states[self.currState].getMove() == 'add' or self.states[self.currState].getMove() == 'monus'
-			or self.states[self.currState].getMove() == 'mult'):
 
+			if(self.states[self.currState].getMove() == 'shR'):
+				self.hashtagMarker += int(self.states[self.currState].getTransition())
+				self.actual = self.actual + int(self.states[self.currState].getTransition()) + int(self.states[self.currState].getTransition())
+				self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'shL' ):
+				self.hashtagMarker -= int(self.states[self.currState].getTransition())
+				self.actual = self.actual - int(self.states[self.currState].getTransition()) - int(self.states[self.currState].getTransition())
+				self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'const'):
+				value = ''
+				value = self.states[self.currState].getTransition()
+				tape.insert(self.actual+1, value)
+				self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'copy'):
+				self.currState += 1	
+
+			elif(self.states[self.currState].getMove() == 'move'):
+				self.currState += 1	
+
+			elif(self.states[self.currState].getMove() == 'swap'):
+				self.currState += 1	
+
+			elif(self.states[self.currState].getMove() == 'add'):
+				self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'monus'):
+				self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'mult'):
 				self.currState += 1
 
 			else:
 				self.currState = self.states[self.currState].getTransition()
+			
+			print('Tape: /' + str.join(tape[:20]) + '/' ) 
+			print(f'Current # Marker at position: {self.hashtagMarker} ')
+			#Testing stuff remove later 
+			print(f'<<<Actual # Marker at position (For testing the tape only): {self.actual}>>>')
 
 
 #Object that holds the information of each state from the CSV File
