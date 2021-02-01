@@ -3,4 +3,7 @@
 3,const,11111111
 4,shL,1
 5,shR,2
-6,Halt,0
+6,copy,2
+7,copy,2
+8,shL,2
+9,Halt,-

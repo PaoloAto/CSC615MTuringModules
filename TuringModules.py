@@ -49,6 +49,10 @@ class TURING:
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'copy'):
+				copy = (int(self.states[self.currState].getTransition()) * 2) - 1
+				tape.insert(self.actual+1, tape[self.actual-copy])
+				self.hashtagMarker += 1
+				self.actual +=  2
 				self.currState += 1	
 
 			elif(self.states[self.currState].getMove() == 'move'):
