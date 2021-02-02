@@ -208,12 +208,12 @@ test2 = "SQRT-9.csv"
 test3 = "Exam-T(3).csv"
 
 #Open CSV Files
-with open(test1) as csv_file:
+with open(test2) as csv_file:
 	csv_reader = csv.reader(csv_file, delimiter=',')
 	state_count = 0
 	states = {}
 	print ("======= Turing Modules SIMULATION ======")
-	print(f"Loading Turing Modules File: {test1}")
+	print(f"Loading Turing Modules File: {test2}")
 
 	# CSV FORMAT: row[0] = module number, row[1] = turing module, row [2] = action/value/transition
 	for row in csv_reader:
