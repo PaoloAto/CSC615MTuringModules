@@ -125,6 +125,21 @@ class TURING:
 
 				self.currState += 1
 
+			elif(self.states[self.currState].getMove() == 'divide'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				div = 0
+				div = n1 // n2
+				if (n1 > n2):
+					answer = ''
+					for x in range(div):
+  						answer += '1'
+					tape[self.actual+1] = answer
+				else:
+					tape[self.actual+1] = '#'				
+
+				self.currState += 1
+
 			elif(self.states[self.currState].getMove() == 'ifEQ'):
 				n1 = len(tape[self.actual+1])
 				n2 = len(tape[self.actual+3])
@@ -190,7 +205,7 @@ class State:
 #Turing Modules CSV Files 
 test1 = "GCD-6-8.csv"
 test2 = "SQRT-9.csv"
-test3 = "Exam-3.csv"
+test3 = "Exam-T(3).csv"
 
 #Open CSV Files
 with open(test1) as csv_file:
@@ -215,3 +230,5 @@ with open(test1) as csv_file:
 #<<<<<Main Program>>>>>
 tm = TURING(states)
 tm.simulateMachine()
+
+
