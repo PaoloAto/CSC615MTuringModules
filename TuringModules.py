@@ -15,6 +15,8 @@ class TURING:
 		self.currState = 1
 		self.hashtagMarker = 0
 		self.actual = 0
+		self.moveCounter = 0
+		self.valid = True
 
 		# Initializing the tape with #
 		tape = ['#']*100
@@ -25,13 +27,14 @@ class TURING:
 		print(f'Current # Marker at position: {self.hashtagMarker} ')
 
 		#while loop runs as long as the 'Halt' state has not been reached
-		while self.states[self.currState].getMove() != 'Halt':
-			# time.sleep(1.5)
+		while self.states[self.currState].getMove() != 'Halt' and self.valid == True:
+			self.moveCounter += 1
+			# time.sleep(1)
 			print("==========================================")
-			print(f"Module # {self.states[self.currState].getIndex()} ")
+			print(f"Module Number: {self.currState}")
 			print(f"Currently at Turing Module: {self.states[self.currState].getMove()}")
 			print(f"Action/Value/Transition: {self.states[self.currState].getTransition()} ")
-
+			
 			if(self.states[self.currState].getMove() == 'shR'):
 				self.hashtagMarker += int(self.states[self.currState].getTransition())
 				self.actual = self.actual + int(self.states[self.currState].getTransition()) + int(self.states[self.currState].getTransition())
@@ -56,27 +59,116 @@ class TURING:
 				self.currState += 1	
 
 			elif(self.states[self.currState].getMove() == 'move'):
+				#Getting the j and k of the move module
+				txt = self.states[self.currState].getTransition()
+				move = txt.split("-")
+				j = int(move[0])
+				k = int(move[1])
+				#Performing move
+				for x in range(j):
+					tape.pop(self.actual)
+					self.actual =  self.actual - 1
+					tape.pop(self.actual)
+					self.hashtagMarker = self.hashtagMarker - 1
+					self.actual =  self.actual - 1
+					tape.append('#')
+					tape.append('#')
+
 				self.currState += 1	
 
 			elif(self.states[self.currState].getMove() == 'swap'):
+				temp = ''
+				temp = tape[self.actual+1]
+				tape[self.actual+1] = tape[self.actual+3]
+				tape[self.actual+3] = temp
 				self.currState += 1	
 
 			elif(self.states[self.currState].getMove() == 'add'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+3] = '#'
+				addition = 0
+				addition = n1 + n2
+				answer = ''
+				for x in range(addition):
+  					answer += '1'
+				tape[self.actual+1] = answer
+
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'monus'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+3] = '#'
+				subtract = 0
+				subtract = n1 - n2
+				if (subtract >= 0):
+					answer = ''
+					for x in range(subtract):
+  						answer += '1'
+					tape[self.actual+1] = answer
+				else:
+					tape[self.actual+1] = '#'
+
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'mult'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+3] = '#'
+				mult = 0
+				mult = n1 * n2
+				answer = ''
+				for x in range(mult):
+  					answer += '1'
+				tape[self.actual+1] = answer
+
 				self.currState += 1
 
+			elif(self.states[self.currState].getMove() == 'ifEQ'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+1] = '#'
+				tape[self.actual+3] = '#'
+				if(n1 == n2):
+					self.currState = int(self.states[self.currState].getTransition())
+				else:
+					self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'ifGT'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+1] = '#'
+				tape[self.actual+3] = '#'
+				if(n1 > n2):
+					self.currState = int(self.states[self.currState].getTransition())
+				else:
+					self.currState += 1		
+
+			elif(self.states[self.currState].getMove() == 'ifLT'):
+				n1 = len(tape[self.actual+1])
+				n2 = len(tape[self.actual+3])
+				tape[self.actual+1] = '#'
+				tape[self.actual+3] = '#'
+				if(n1 < n2):
+					self.currState = int(self.states[self.currState].getTransition())
+				else:
+					self.currState += 1
+
+			elif(self.states[self.currState].getMove() == 'goto'):
+				self.currState = int(self.states[self.currState].getTransition())
+
 			else:
-				self.currState = self.states[self.currState].getTransition()
-			
+				print("Invalid Statement")
+				self.valid = False
+	
 			print('Tape: /' + str.join(tape[:20]) + '/' ) 
 			print(f'Current # Marker at position: {self.hashtagMarker} ')
 			#Testing stuff remove later 
 			print(f'<<<Actual # Marker at position (For testing the tape only): {self.actual}>>>')
+		
+		print(f'<<<Number of moves taken (For testing the tape only): {self.moveCounter}>>>')
+		# print(f'<<<Length of tape: (For testing the tape only): {len(tape)}>>>')
 
 
 #Object that holds the information of each state from the CSV File
