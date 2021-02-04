@@ -46,9 +46,15 @@ class TURING:
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'const'):
-				value = ''
-				value = self.states[self.currState].getTransition()
-				tape.insert(self.actual+1, value)
+				#valid since there is still no value on the next # marker
+				if(tape[self.actual+1] == '#'):
+					value = ''
+					value = self.states[self.currState].getTransition()
+					tape.insert(self.actual+1, value)
+				else:
+					print("Invalid Statement (There is already a value in the next # marker) \nTerminating Program......")
+					self.valid = False
+
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'copy'):
@@ -84,25 +90,45 @@ class TURING:
 				self.currState += 1	
 
 			elif(self.states[self.currState].getMove() == 'add'):
-				n1 = len(tape[self.actual+1])
-				n2 = len(tape[self.actual+3])
+				if(tape[self.actual+1] == '#'):
+					n1 = 0
+				else:
+					n1 = len(tape[self.actual+1])
+
+				if(tape[self.actual+3] == '#'):
+					n2 = 0
+				else:
+					n2 = len(tape[self.actual+3])
+
 				tape[self.actual+3] = '#'
 				addition = 0
 				addition = n1 + n2
-				answer = ''
-				for x in range(addition):
-  					answer += '1'
-				tape[self.actual+1] = answer
+				if(addition > 0):
+					answer = ''
+					for x in range(addition):
+						answer += '1'
+					tape[self.actual+1] = answer
+				else:
+					print("No numbers were added the stape is still unchanged")
+					tape[self.actual+1] = '#'
 
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'monus'):
-				n1 = len(tape[self.actual+1])
-				n2 = len(tape[self.actual+3])
+				if(tape[self.actual+1] == '#'):
+					n1 = 0
+				else:
+					n1 = len(tape[self.actual+1])
+
+				if(tape[self.actual+3] == '#'):
+					n2 = 0
+				else:
+					n2 = len(tape[self.actual+3])
+
 				tape[self.actual+3] = '#'
 				subtract = 0
 				subtract = n1 - n2
-				if (subtract >= 0):
+				if (subtract > 0):
 					answer = ''
 					for x in range(subtract):
   						answer += '1'
@@ -113,23 +139,55 @@ class TURING:
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'mult'):
-				n1 = len(tape[self.actual+1])
-				n2 = len(tape[self.actual+3])
+				if(tape[self.actual+1] == '#'):
+					n1 = 0
+				else:
+					n1 = len(tape[self.actual+1])
+
+				if(tape[self.actual+3] == '#'):
+					n2 = 0
+				else:
+					n2 = len(tape[self.actual+3])
+
 				tape[self.actual+3] = '#'
 				mult = 0
 				mult = n1 * n2
-				answer = ''
-				for x in range(mult):
-  					answer += '1'
-				tape[self.actual+1] = answer
+				if(mult > 0):
+					answer = ''
+					for x in range(mult):
+						answer += '1'
+					tape[self.actual+1] = answer
+				else:
+					tape[self.actual+1] = '#'
 
 				self.currState += 1
 
 			elif(self.states[self.currState].getMove() == 'divide'):
-				n1 = len(tape[self.actual+1])
-				n2 = len(tape[self.actual+3])
+				if(tape[self.actual+1] == '#'):
+					n1 = 0
+				else:
+					n1 = len(tape[self.actual+1])
+
+				if(tape[self.actual+3] == '#'):
+					n2 = 0
+				else:
+					n2 = len(tape[self.actual+3])
+
 				div = 0
 				div = n1 // n2
+				#check if n1 is equal to zero/represented only by a #
+				if(n1 == 0):
+					tape[self.actual+1] = '#'
+
+				#check if n2 is equal to zero/represented only by a #
+				if(n2 == 0):
+					if(n1 == 0):
+						tape[self.actual+1] = '#'	
+					else:
+						print("Invalid Statement (Undefined answer [dividing by 0]) \nTerminating Program......")
+						self.valid = False		
+
+				#Check answer if n1 or n2 is not equal to zero/a hashtag
 				if (n1 > n2):
 					answer = ''
 					for x in range(div):
@@ -174,16 +232,16 @@ class TURING:
 				self.currState = int(self.states[self.currState].getTransition())
 
 			else:
-				print("Invalid Statement")
+				print("Invalid Statement \nTerminating Program......")
 				self.valid = False
 	
 			print('Tape: /' + str.join(tape[:20]) + '/' ) 
 			print(f'Current # Marker at position: {self.hashtagMarker} ')
 			#Testing stuff remove later 
 			print(f'<<<Actual # Marker at position (For testing the tape only): {self.actual}>>>')
+			print(f'<<<Number of moves taken (For testing the tape only): {self.moveCounter}>>>')
 		
-		print(f'<<<Number of moves taken (For testing the tape only): {self.moveCounter}>>>')
-		# print(f'<<<Length of tape: (For testing the tape only): {len(tape)}>>>')
+		
 
 
 #Object that holds the information of each state from the CSV File
@@ -203,17 +261,18 @@ class State:
 		return self.transition
 
 #Turing Modules CSV Files 
-test1 = "GCD-6-8.csv"
+test1 = "GCD-6-8.csv" 
 test2 = "SQRT-9.csv"
 test3 = "Exam-T(3).csv"
+#(64,40,26) total steps taken
 
 #Open CSV Files
-with open(test3) as csv_file:
+with open(test2) as csv_file:
 	csv_reader = csv.reader(csv_file, delimiter=',')
 	state_count = 0
 	states = {}
 	print ("======= Turing Modules SIMULATION ======")
-	print(f"Loading Turing Modules File: {test3}")
+	print(f"Loading Turing Modules File: {test2}")
 
 	# CSV FORMAT: row[0] = module number, row[1] = turing module, row [2] = action/value/transition
 	for row in csv_reader:
